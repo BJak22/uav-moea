@@ -1,7 +1,7 @@
 #pragma once
 #include "Individual.h"
 
-namespace UavMoea {
+namespace UavMoea::interfaces {
 
 class IArchiver {
 public:
@@ -10,4 +10,4 @@ public:
     virtual const std::vector<Individual>& getArchive() const = 0;
 };
 
-} // namespace UavMoea
+} // namespace UavMoea::interfaces

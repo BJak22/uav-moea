@@ -7,8 +7,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(SOURCES
     src/main.cpp
-    src/ArchiverStrategy.cpp
-    src/UavPathProblem.cpp
+    src/Algorithm.cpp
+    src/RandomSelection.cpp
+    src/Zdt1Problem.cpp
+    src/SbxVariation.cpp
+    src/Nsga2Archiver.cpp
+    src/AsyncLogger.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
