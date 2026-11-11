@@ -70,25 +70,25 @@ std::vector<std::vector<size_t>> Nsga2Archiver::fastNonDominatedSort(const std::
     return fronts;
 }
 
-void Nsga2Archiver::calculateCrowdingDistance(std::vector<Individual>& pop, const std::vector<size_t>& front) const {
+void Nsga2Archiver::calculateCrowdingDistance(const std::vector<Individual>& pop, const std::vector<size_t>& front,
+                                              std::vector<double>& distances) const {
     size_t size = front.size();
     if (size == 0)
         return;
 
     for (size_t idx : front) {
-        pop[idx].crowdingDistance = 0.0;
+        distances[idx] = 0.0;
     }
 
     size_t num_objectives = pop[front[0]].objectives.size();
-
     std::vector<size_t> sorted_front = front;
 
     for (size_t obj = 0; obj < num_objectives; ++obj) {
         std::sort(sorted_front.begin(), sorted_front.end(),
                   [&](size_t a, size_t b) { return pop[a].objectives[obj] < pop[b].objectives[obj]; });
 
-        pop[sorted_front.front()].crowdingDistance = std::numeric_limits<double>::infinity();
-        pop[sorted_front.back()].crowdingDistance = std::numeric_limits<double>::infinity();
+        distances[sorted_front.front()] = std::numeric_limits<double>::infinity();
+        distances[sorted_front.back()] = std::numeric_limits<double>::infinity();
 
         double min_obj = pop[sorted_front.front()].objectives[obj];
         double max_obj = pop[sorted_front.back()].objectives[obj];
@@ -98,8 +98,8 @@ void Nsga2Archiver::calculateCrowdingDistance(std::vector<Individual>& pop, cons
             continue;
 
         for (size_t i = 1; i < size - 1; ++i) {
-            if (pop[sorted_front[i]].crowdingDistance != std::numeric_limits<double>::infinity()) {
-                pop[sorted_front[i]].crowdingDistance +=
+            if (distances[sorted_front[i]] != std::numeric_limits<double>::infinity()) {
+                distances[sorted_front[i]] +=
                     (pop[sorted_front[i + 1]].objectives[obj] - pop[sorted_front[i - 1]].objectives[obj]) / range;
             }
         }
@@ -114,16 +114,14 @@ void Nsga2Archiver::update(const std::vector<Individual>& offspring) {
 
     std::vector<Individual> combined_pop = m_archive;
     combined_pop.insert(combined_pop.end(), offspring.begin(), offspring.end());
-
     std::vector<std::vector<size_t>> fronts = fastNonDominatedSort(combined_pop);
-
+    std::vector<double> crowding_distances(combined_pop.size(), 0.0);
     std::vector<Individual> next_archive;
     next_archive.reserve(m_capacity);
 
     size_t current_front_idx = 0;
     while (current_front_idx < fronts.size() && next_archive.size() + fronts[current_front_idx].size() <= m_capacity) {
-
-        calculateCrowdingDistance(combined_pop, fronts[current_front_idx]);
+        calculateCrowdingDistance(combined_pop, fronts[current_front_idx], crowding_distances);
 
         for (size_t idx : fronts[current_front_idx]) {
             next_archive.push_back(std::move(combined_pop[idx]));
@@ -133,11 +131,10 @@ void Nsga2Archiver::update(const std::vector<Individual>& offspring) {
 
     if (next_archive.size() < m_capacity && current_front_idx < fronts.size()) {
         std::vector<size_t>& last_front = fronts[current_front_idx];
-        calculateCrowdingDistance(combined_pop, last_front);
+        calculateCrowdingDistance(combined_pop, last_front, crowding_distances);
 
-        std::sort(last_front.begin(), last_front.end(), [&](size_t a, size_t b) {
-            return combined_pop[a].crowdingDistance > combined_pop[b].crowdingDistance;
-        });
+        std::sort(last_front.begin(), last_front.end(),
+                  [&](size_t a, size_t b) { return crowding_distances[a] > crowding_distances[b]; });
 
         size_t needed = m_capacity - next_archive.size();
         for (size_t i = 0; i < needed; ++i) {
