@@ -1,13 +1,14 @@
-#include "Algorithm.h"
-#include "AsyncLogger.h"
-#include "Nsga2Archiver.h"
-#include "RandomSelection.h"
-#include "SbxVariation.h"
-#include "Zdt1Problem.h"
 #include <future>
 #include <iostream>
 #include <memory>
 #include <vector>
+
+#include "archivers/Nsga2Archiver.h"
+#include "core/Algorithm.h"
+#include "core/AsyncLogger.h"
+#include "problems/Zdt1Problem.h"
+#include "selections/RandomSelection.h"
+#include "variations/SbxVariation.h"
 
 using namespace UavMoea;
 
@@ -17,10 +18,10 @@ void runExperiment(int experiment_id, AsyncLogger& logger) {
     uint16_t max_evaluations = 25000;
     int log_interval = 2500;
 
-    auto problem = std::make_unique<Zdt1Problem>(30);
-    auto archiver = std::make_unique<Nsga2Archiver>(mu);
-    auto variation = std::make_unique<SbxVariation>();
-    auto selection = std::make_unique<RandomSelection>();
+    auto problem = std::make_unique<problems::Zdt1Problem>(30);
+    auto archiver = std::make_unique<archivers::Nsga2Archiver>(mu);
+    auto variation = std::make_unique<variations::SbxVariation>();
+    auto selection = std::make_unique<selections::RandomSelection>();
 
     Algorithm optimizer(std::move(archiver), std::move(variation), std::move(problem), std::move(selection));
 

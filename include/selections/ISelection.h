@@ -1,7 +1,8 @@
 #pragma once
-#include "Individual.h"
 
-namespace UavMoea::interfaces {
+#include "core/Individual.h"
+
+namespace UavMoea::selections {
 
 class ISelection {
 public:
@@ -9,4 +10,4 @@ public:
     virtual std::vector<Individual> selectParents(const std::vector<Individual>& archive, uint16_t count) const = 0;
 };
 
-} // namespace UavMoea::interfaces
+} // namespace UavMoea::selections

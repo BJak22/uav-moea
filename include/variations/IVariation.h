@@ -1,7 +1,8 @@
 #pragma once
-#include "Individual.h"
 
-namespace UavMoea::interfaces {
+#include "core/Individual.h"
+
+namespace UavMoea::variations {
 
 class IVariation {
 public:
@@ -11,4 +12,4 @@ public:
     virtual std::vector<Individual> generateOffspring(const std::vector<Individual>& parents) = 0;
 };
 
-} // namespace UavMoea::interfaces
+} // namespace UavMoea::variations

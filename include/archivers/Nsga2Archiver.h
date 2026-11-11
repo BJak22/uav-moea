@@ -1,11 +1,13 @@
 #pragma once
-#include "interfaces/IArchiver.h"
+
 #include <cstdint>
 #include <vector>
 
-namespace UavMoea {
+#include "IArchiver.h"
 
-class Nsga2Archiver : public interfaces::IArchiver {
+namespace UavMoea::archivers {
+
+class Nsga2Archiver : public IArchiver {
 public:
     explicit Nsga2Archiver(uint16_t capacity);
 
@@ -21,4 +23,4 @@ private:
     bool dominates(const Individual& a, const Individual& b) const;
 };
 
-} // namespace UavMoea
+} // namespace UavMoea::archivers

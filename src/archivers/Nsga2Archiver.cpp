@@ -1,9 +1,10 @@
-#include "Nsga2Archiver.h"
+#include "archivers/Nsga2Archiver.h"
+
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
 
-namespace UavMoea {
+namespace UavMoea::archivers {
 
 Nsga2Archiver::Nsga2Archiver(uint16_t capacity) : m_capacity(capacity) {
     m_archive.reserve(m_capacity);
@@ -75,7 +76,7 @@ void Nsga2Archiver::calculateCrowdingDistance(std::vector<Individual>& pop, cons
         return;
 
     for (size_t idx : front) {
-        pop[idx].crowding_distance = 0.0;
+        pop[idx].crowdingDistance = 0.0;
     }
 
     size_t num_objectives = pop[front[0]].objectives.size();
@@ -86,8 +87,8 @@ void Nsga2Archiver::calculateCrowdingDistance(std::vector<Individual>& pop, cons
         std::sort(sorted_front.begin(), sorted_front.end(),
                   [&](size_t a, size_t b) { return pop[a].objectives[obj] < pop[b].objectives[obj]; });
 
-        pop[sorted_front.front()].crowding_distance = std::numeric_limits<double>::infinity();
-        pop[sorted_front.back()].crowding_distance = std::numeric_limits<double>::infinity();
+        pop[sorted_front.front()].crowdingDistance = std::numeric_limits<double>::infinity();
+        pop[sorted_front.back()].crowdingDistance = std::numeric_limits<double>::infinity();
 
         double min_obj = pop[sorted_front.front()].objectives[obj];
         double max_obj = pop[sorted_front.back()].objectives[obj];
@@ -97,8 +98,8 @@ void Nsga2Archiver::calculateCrowdingDistance(std::vector<Individual>& pop, cons
             continue;
 
         for (size_t i = 1; i < size - 1; ++i) {
-            if (pop[sorted_front[i]].crowding_distance != std::numeric_limits<double>::infinity()) {
-                pop[sorted_front[i]].crowding_distance +=
+            if (pop[sorted_front[i]].crowdingDistance != std::numeric_limits<double>::infinity()) {
+                pop[sorted_front[i]].crowdingDistance +=
                     (pop[sorted_front[i + 1]].objectives[obj] - pop[sorted_front[i - 1]].objectives[obj]) / range;
             }
         }
@@ -135,7 +136,7 @@ void Nsga2Archiver::update(const std::vector<Individual>& offspring) {
         calculateCrowdingDistance(combined_pop, last_front);
 
         std::sort(last_front.begin(), last_front.end(), [&](size_t a, size_t b) {
-            return combined_pop[a].crowding_distance > combined_pop[b].crowding_distance;
+            return combined_pop[a].crowdingDistance > combined_pop[b].crowdingDistance;
         });
 
         size_t needed = m_capacity - next_archive.size();
@@ -147,4 +148,4 @@ void Nsga2Archiver::update(const std::vector<Individual>& offspring) {
     m_archive = std::move(next_archive);
 }
 
-} // namespace UavMoea
+} // namespace UavMoea::archivers

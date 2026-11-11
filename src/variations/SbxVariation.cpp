@@ -1,8 +1,9 @@
-#include "SbxVariation.h"
+#include "variations/SbxVariation.h"
+
 #include <algorithm>
 #include <cmath>
 
-namespace UavMoea {
+namespace UavMoea::variations {
 
 SbxVariation::SbxVariation(double pc, double pm, double eta_c, double eta_m, double lower_bound, double upper_bound)
     : m_pc(pc), m_pm(pm), m_eta_c(eta_c), m_eta_m(eta_m), m_lower_bound(lower_bound), m_upper_bound(upper_bound),
@@ -88,4 +89,4 @@ void SbxVariation::applyPolynomialMutation(std::vector<double>& x) const {
     }
 }
 
-} // namespace UavMoea
+} // namespace UavMoea::variations

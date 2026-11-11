@@ -1,10 +1,12 @@
 #pragma once
-#include "interfaces/ISelection.h"
+
 #include <random>
 
-namespace UavMoea {
+#include "ISelection.h"
 
-class RandomSelection : public interfaces::ISelection {
+namespace UavMoea::selections {
+
+class RandomSelection : public ISelection {
 public:
     RandomSelection();
     std::vector<Individual> selectParents(const std::vector<Individual>& archive, uint16_t count) const override;
@@ -13,4 +15,4 @@ private:
     mutable std::mt19937 m_rng;
 };
 
-} // namespace UavMoea
+} // namespace UavMoea::selections

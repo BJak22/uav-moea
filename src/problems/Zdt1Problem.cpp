@@ -1,9 +1,10 @@
-#include "Zdt1Problem.h"
+#include "problems/Zdt1Problem.h"
+
 #include <cmath>
 #include <numeric>
 #include <random>
 
-namespace UavMoea {
+namespace UavMoea::problems {
 
 Zdt1Problem::Zdt1Problem(int dimensions) : m_dimensions(dimensions), m_rng(std::random_device{}()) {}
 
@@ -37,4 +38,4 @@ void Zdt1Problem::evaluate(Individual& individual) const {
     individual.objectives = {f1, f2};
 }
 
-} // namespace UavMoea
+} // namespace UavMoea::problems

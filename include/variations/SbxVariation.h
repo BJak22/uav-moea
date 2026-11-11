@@ -1,10 +1,12 @@
 #pragma once
-#include "interfaces/IVariation.h"
+
 #include <random>
 
-namespace UavMoea {
+#include "IVariation.h"
 
-class SbxVariation : public interfaces::IVariation {
+namespace UavMoea::variations {
+
+class SbxVariation : public IVariation {
 public:
     SbxVariation(double pc = 0.9, double pm = 1.0 / 30.0, double eta_c = 20.0, double eta_m = 20.0,
                  double lower_bound = 0.0, double upper_bound = 1.0);
@@ -26,4 +28,4 @@ private:
     void applyPolynomialMutation(std::vector<double>& x) const;
 };
 
-} // namespace UavMoea
+} // namespace UavMoea::variations

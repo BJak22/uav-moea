@@ -1,6 +1,6 @@
-#include "RandomSelection.h"
+#include "selections/RandomSelection.h"
 
-namespace UavMoea {
+namespace UavMoea::selections {
 
 RandomSelection::RandomSelection() : m_rng(std::random_device{}()) {}
 
@@ -13,4 +13,5 @@ std::vector<Individual> RandomSelection::selectParents(const std::vector<Individ
     }
     return parents;
 }
-} // namespace UavMoea
+
+} // namespace UavMoea::selections

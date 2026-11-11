@@ -1,10 +1,12 @@
 #pragma once
-#include "interfaces/IProblem.h"
+
 #include <random>
 
-namespace UavMoea {
+#include "IProblem.h"
 
-class Zdt1Problem : public interfaces::IProblem {
+namespace UavMoea::problems {
+
+class Zdt1Problem : public IProblem {
 public:
     explicit Zdt1Problem(int dimensions = 30);
 
@@ -16,4 +18,4 @@ private:
     mutable std::mt19937 m_rng;
 };
 
-} // namespace UavMoea
+} // namespace UavMoea::problems

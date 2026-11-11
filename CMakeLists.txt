@@ -6,13 +6,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(SOURCES
-    src/main.cpp
-    src/Algorithm.cpp
-    src/RandomSelection.cpp
-    src/Zdt1Problem.cpp
-    src/SbxVariation.cpp
-    src/Nsga2Archiver.cpp
-    src/AsyncLogger.cpp
+    src/core/main.cpp
+    src/core/Algorithm.cpp
+    src/core/AsyncLogger.cpp
+
+    src/archivers/Nsga2Archiver.cpp
+
+    src/problems/Zdt1Problem.cpp
+
+    src/selections/RandomSelection.cpp
+    
+    src/variations/SbxVariation.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

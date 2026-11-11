@@ -1,7 +1,8 @@
 #pragma once
-#include "Individual.h"
 
-namespace UavMoea::interfaces {
+#include "core/Individual.h"
+
+namespace UavMoea::problems {
 
 class IProblem {
 public:
@@ -10,4 +11,4 @@ public:
     virtual Individual generateRandom() const = 0;
 };
 
-} // namespace UavMoea::interfaces
+} // namespace UavMoea::problems

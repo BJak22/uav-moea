@@ -1,11 +1,12 @@
-#include "Algorithm.h"
+#include "core/Algorithm.h"
+
 #include <iostream>
 #include <random>
 
 namespace UavMoea {
 
-Algorithm::Algorithm(std::unique_ptr<interfaces::IArchiver> archiver, std::unique_ptr<interfaces::IVariation> variation,
-                     std::unique_ptr<interfaces::IProblem> problem, std::unique_ptr<interfaces::ISelection> selection)
+Algorithm::Algorithm(std::unique_ptr<archivers::IArchiver> archiver, std::unique_ptr<variations::IVariation> variation,
+                     std::unique_ptr<problems::IProblem> problem, std::unique_ptr<selections::ISelection> selection)
     : m_archiver(std::move(archiver)), m_variation(std::move(variation)), m_problem(std::move(problem)),
       m_selection(std::move(selection)) {}
 
