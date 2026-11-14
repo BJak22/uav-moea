@@ -21,7 +21,6 @@ private:
     std::vector<std::vector<size_t>> fastNonDominatedSort(const std::vector<Individual>& population) const;
     void calculateCrowdingDistance(const std::vector<Individual>& population, const std::vector<size_t>& front,
                                    std::vector<double>& distances) const;
-    bool dominates(const Individual& a, const Individual& b) const;
 };
 
 } // namespace UavMoea::archivers

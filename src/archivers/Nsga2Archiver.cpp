@@ -4,6 +4,8 @@
 #include <limits>
 #include <stdexcept>
 
+#include "utils/Pareto.h"
+
 namespace UavMoea::archivers {
 
 Nsga2Archiver::Nsga2Archiver(uint16_t capacity) : m_capacity(capacity) {
@@ -12,62 +14,6 @@ Nsga2Archiver::Nsga2Archiver(uint16_t capacity) : m_capacity(capacity) {
 
 const std::vector<Individual>& Nsga2Archiver::getArchive() const {
     return m_archive;
-}
-
-bool Nsga2Archiver::dominates(const Individual& a, const Individual& b) const {
-    bool strictly_better = false;
-    for (size_t i = 0; i < a.objectives.size(); ++i) {
-        if (a.objectives[i] > b.objectives[i]) {
-            return false;
-        }
-        if (a.objectives[i] < b.objectives[i]) {
-            strictly_better = true;
-        }
-    }
-    return strictly_better;
-}
-
-std::vector<std::vector<size_t>> Nsga2Archiver::fastNonDominatedSort(const std::vector<Individual>& pop) const {
-    std::vector<std::vector<size_t>> fronts;
-    std::vector<size_t> domination_counts(pop.size(), 0);
-    std::vector<std::vector<size_t>> dominated_lists(pop.size());
-    std::vector<size_t> current_front;
-
-    for (size_t p = 0; p < pop.size(); ++p) {
-        for (size_t q = 0; q < pop.size(); ++q) {
-            if (p == q)
-                continue;
-            if (dominates(pop[p], pop[q])) {
-                dominated_lists[p].push_back(q);
-            } else if (dominates(pop[q], pop[p])) {
-                domination_counts[p]++;
-            }
-        }
-        if (domination_counts[p] == 0) {
-            current_front.push_back(p);
-        }
-    }
-
-    fronts.push_back(current_front);
-
-    size_t front_idx = 0;
-    while (!fronts[front_idx].empty()) {
-        std::vector<size_t> next_front;
-        for (size_t p : fronts[front_idx]) {
-            for (size_t q : dominated_lists[p]) {
-                domination_counts[q]--;
-                if (domination_counts[q] == 0) {
-                    next_front.push_back(q);
-                }
-            }
-        }
-        if (next_front.empty())
-            break;
-        fronts.push_back(next_front);
-        front_idx++;
-    }
-
-    return fronts;
 }
 
 void Nsga2Archiver::calculateCrowdingDistance(const std::vector<Individual>& pop, const std::vector<size_t>& front,
@@ -114,7 +60,7 @@ void Nsga2Archiver::update(const std::vector<Individual>& offspring) {
 
     std::vector<Individual> combined_pop = m_archive;
     combined_pop.insert(combined_pop.end(), offspring.begin(), offspring.end());
-    std::vector<std::vector<size_t>> fronts = fastNonDominatedSort(combined_pop);
+    std::vector<std::vector<size_t>> fronts = utils::fastNonDominatedSort(combined_pop);
     std::vector<double> crowding_distances(combined_pop.size(), 0.0);
     std::vector<Individual> next_archive;
     next_archive.reserve(m_capacity);

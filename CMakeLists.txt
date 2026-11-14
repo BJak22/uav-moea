@@ -11,12 +11,17 @@ set(SOURCES
     src/core/AsyncLogger.cpp
 
     src/archivers/Nsga2Archiver.cpp
+    src/archivers/IndicatorBasedArchiver.cpp
 
     src/problems/Zdt1Problem.cpp
 
     src/selections/RandomSelection.cpp
     
     src/variations/SbxVariation.cpp
+
+    src/indicators/R2Indicator.cpp
+
+    src/utils/Pareto.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
