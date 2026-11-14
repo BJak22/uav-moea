@@ -20,6 +20,8 @@ set(SOURCES
     src/variations/SbxVariation.cpp
 
     src/indicators/R2Indicator.cpp
+    src/indicators/IgdPlusIndicator.cpp
+    src/indicators/EpsilonIndicator.cpp
 
     src/utils/Pareto.cpp
 )
