@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "archivers/IndicatorBasedArchiver.h"
+#include "archivers/MultiLevelGridArchiver.h"
 #include "archivers/Nsga2Archiver.h"
 #include "core/Algorithm.h"
 #include "core/AsyncLogger.h"
@@ -38,34 +39,35 @@ int main() {
 
     {
         AsyncLogger logger_nsga2("experiments_results_nsga2.csv");
-        AsyncLogger logger_indicator_based("experiments_results_indicatorBased.csv");
+        AsyncLogger logger_r2("experiments_results_indicatorBased_r2.csv");
+        AsyncLogger logger_mga("experiments_results_MGA.csv");
 
         std::cout << "Running " << num_experiments << " experiments for each archiver in parallel..." << std::endl;
 
         std::vector<std::future<void>> futures;
-        futures.reserve(num_experiments * 2);
+        futures.reserve(num_experiments * 3);
+
+        auto dispatchExperiment = [&](int id, AsyncLogger& log, std::unique_ptr<archivers::IArchiver> arch,
+                                      uint16_t lambda) {
+            auto prob = std::make_unique<problems::Zdt1Problem>(30);
+            auto var = std::make_unique<variations::SbxVariation>();
+            auto sel = std::make_unique<selections::RandomSelection>();
+
+            futures.push_back(std::async(std::launch::async, runExperiment, id, std::ref(log), std::move(prob),
+                                         std::move(arch), std::move(var), std::move(sel), mu, lambda));
+        };
 
         for (int i = 0; i < num_experiments; ++i) {
+            // NSGA 2
+            dispatchExperiment(i, logger_nsga2, std::make_unique<archivers::Nsga2Archiver>(mu), 100);
 
-            auto prob_nsga2 = std::make_unique<problems::Zdt1Problem>(30);
-            auto var_nsga2 = std::make_unique<variations::SbxVariation>();
-            auto sel_nsga2 = std::make_unique<selections::RandomSelection>();
-            auto arch_nsga2 = std::make_unique<archivers::Nsga2Archiver>(mu);
+            // R2-EMOA
+            auto r2_ind = std::make_unique<indicators::R2Indicator>(r2_weights);
+            dispatchExperiment(i, logger_r2, std::make_unique<archivers::IndicatorBasedArchiver>(mu, std::move(r2_ind)),
+                               1);
 
-            futures.push_back(std::async(std::launch::async, runExperiment, i, std::ref(logger_nsga2),
-                                         std::move(prob_nsga2), std::move(arch_nsga2), std::move(var_nsga2),
-                                         std::move(sel_nsga2), mu, uint16_t(100)));
-
-            auto prob_r2 = std::make_unique<problems::Zdt1Problem>(30);
-            auto var_r2 = std::make_unique<variations::SbxVariation>();
-            auto sel_r2 = std::make_unique<selections::RandomSelection>();
-
-            auto r2_indicator = std::make_unique<indicators::R2Indicator>(r2_weights);
-            auto arch_r2 = std::make_unique<archivers::IndicatorBasedArchiver>(mu, std::move(r2_indicator));
-
-            futures.push_back(std::async(std::launch::async, runExperiment, i, std::ref(logger_indicator_based),
-                                         std::move(prob_r2), std::move(arch_r2), std::move(var_r2), std::move(sel_r2),
-                                         mu, uint16_t(1)));
+            // MGA
+            dispatchExperiment(i, logger_mga, std::make_unique<archivers::MultiLevelGridArchiver>(mu), 1);
         }
 
         for (auto& fut : futures) {
