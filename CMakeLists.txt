@@ -12,6 +12,7 @@ set(SOURCES
 
     src/archivers/Nsga2Archiver.cpp
     src/archivers/IndicatorBasedArchiver.cpp
+    src/archivers/MultiLevelGridArchiver.cpp
 
     src/problems/Zdt1Problem.cpp
 
