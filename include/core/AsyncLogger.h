@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <cstdint>
 #include <fstream>
 #include <mutex>
 #include <queue>
@@ -13,16 +14,16 @@ namespace UavMoea {
 
 struct Snapshot {
     int experiment_id;
-    int evaluation;
+    uint32_t evaluation;
     std::vector<std::vector<double>> objectives;
 };
 
 class AsyncLogger {
 public:
-    explicit AsyncLogger(const std::string& filename);
+    explicit AsyncLogger(const std::string& filename, size_t num_objectives = 2);
     ~AsyncLogger();
 
-    void log(int experiment_id, int evaluation, const std::vector<std::vector<double>>& objectives);
+    void log(int experiment_id, uint32_t evaluation, const std::vector<std::vector<double>>& objectives);
 
 private:
     void processQueue();

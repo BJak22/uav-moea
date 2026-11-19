@@ -20,8 +20,8 @@ void runExperiment(int experiment_id, AsyncLogger& logger, std::unique_ptr<probl
                    std::unique_ptr<archivers::IArchiver> archiver, std::unique_ptr<variations::IVariation> variation,
                    std::unique_ptr<selections::ISelection> selection, uint16_t capacity, uint16_t lambda) {
     try {
-        uint16_t max_evaluations = 25000;
-        int log_interval = 2500;
+        uint32_t max_evaluations = 25000;
+        uint32_t log_interval = 2500;
 
         Algorithm optimizer(std::move(archiver), std::move(variation), std::move(problem), std::move(selection));
         optimizer.run(max_evaluations, capacity, lambda, &logger, experiment_id, log_interval);

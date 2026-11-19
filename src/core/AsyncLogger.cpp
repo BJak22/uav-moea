@@ -3,16 +3,23 @@
 
 namespace UavMoea {
 
-AsyncLogger::AsyncLogger(const std::string& filename) : m_running(true) {
+AsyncLogger::AsyncLogger(const std::string& filename, size_t num_objectives) : m_running(true) {
     m_file.open(filename);
     if (m_file.is_open()) {
-        m_file << "experiment_id,evaluation,f1,f2\n";
+        m_file << "experiment_id,evaluation";
+        for (size_t i = 1; i <= num_objectives; ++i) {
+            m_file << ",f" << i;
+        }
+        m_file << "\n";
     }
     m_worker = std::thread(&AsyncLogger::processQueue, this);
 }
 
 AsyncLogger::~AsyncLogger() {
-    m_running = false;
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_running = false;
+    }
     m_cv.notify_one();
     if (m_worker.joinable()) {
         m_worker.join();
@@ -22,7 +29,7 @@ AsyncLogger::~AsyncLogger() {
     }
 }
 
-void AsyncLogger::log(int experiment_id, int evaluation, const std::vector<std::vector<double>>& objectives) {
+void AsyncLogger::log(int experiment_id, uint32_t evaluation, const std::vector<std::vector<double>>& objectives) {
     Snapshot snap{experiment_id, evaluation, objectives};
 
     {
