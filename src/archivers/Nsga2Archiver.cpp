@@ -67,7 +67,6 @@ void Nsga2Archiver::update(const std::vector<Individual>& offspring) {
 
     size_t current_front_idx = 0;
     while (current_front_idx < fronts.size() && next_archive.size() + fronts[current_front_idx].size() <= m_capacity) {
-        calculateCrowdingDistance(combined_pop, fronts[current_front_idx], crowding_distances);
 
         for (size_t idx : fronts[current_front_idx]) {
             next_archive.push_back(std::move(combined_pop[idx]));

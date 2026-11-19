@@ -23,7 +23,7 @@ Individual Zdt1Problem::generateRandom() const {
 }
 
 void Zdt1Problem::evaluate(Individual& individual) const {
-    const auto& x = std::any_cast<std::vector<double>>(individual.genotype);
+    const auto& x = std::any_cast<const std::vector<double>&>(individual.genotype);
     double f1 = x[0];
     double sum = 0.0;
 
