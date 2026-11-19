@@ -5,7 +5,8 @@
 
 namespace UavMoea::archivers {
 
-MultiLevelGridArchiver::MultiLevelGridArchiver(uint16_t capacity) : m_capacity(capacity) {
+MultiLevelGridArchiver::MultiLevelGridArchiver(uint16_t capacity)
+    : m_capacity(capacity), m_rng(std::random_device{}()) {
     m_archive.reserve(capacity + 1);
 }
 
@@ -13,15 +14,16 @@ const std::vector<Individual>& MultiLevelGridArchiver::getArchive() const {
     return m_archive;
 }
 
-std::vector<int> MultiLevelGridArchiver::getBox(const std::vector<double>& obj, int b) const {
-    std::vector<int> box(obj.size());
+std::vector<int64_t> MultiLevelGridArchiver::getBox(const std::vector<double>& obj, int b) const {
+    std::vector<int64_t> box(obj.size());
     for (size_t i = 0; i < obj.size(); ++i) {
-        box[i] = static_cast<int>(std::floor(std::ldexp(obj[i], -b)));
+        box[i] = static_cast<int64_t>(std::floor(std::ldexp(obj[i], -b)));
     }
     return box;
 }
 
-bool MultiLevelGridArchiver::boxDominatesOrEqual(const std::vector<int>& boxA, const std::vector<int>& boxB) const {
+bool MultiLevelGridArchiver::boxDominatesOrEqual(const std::vector<int64_t>& boxA,
+                                                 const std::vector<int64_t>& boxB) const {
     for (size_t i = 0; i < boxA.size(); ++i) {
         if (boxA[i] > boxB[i])
             return false;
@@ -30,7 +32,6 @@ bool MultiLevelGridArchiver::boxDominatesOrEqual(const std::vector<int>& boxA, c
 }
 
 void MultiLevelGridArchiver::update(const std::vector<Individual>& offspring) {
-    static std::mt19937 gen{std::random_device{}()};
 
     for (const auto& s : offspring) {
         bool rejected = false;
@@ -79,14 +80,14 @@ void MultiLevelGridArchiver::update(const std::vector<Individual>& offspring) {
 
         std::vector<size_t> final_D;
 
-        int low = -60;
+        int low = bar_b - 52;
         int high = bar_b;
 
         while (low <= high) {
             int mid = low + (high - low) / 2;
             std::vector<size_t> current_D;
 
-            std::vector<std::vector<int>> boxes(next_archive.size());
+            std::vector<std::vector<int64_t>> boxes(next_archive.size());
             for (size_t i = 0; i < next_archive.size(); ++i) {
                 boxes[i] = getBox(next_archive[i].objectives, mid);
             }
@@ -121,7 +122,7 @@ void MultiLevelGridArchiver::update(const std::vector<Individual>& offspring) {
                 to_remove = s_idx;
             } else {
                 std::uniform_int_distribution<size_t> dist(0, final_D.size() - 1);
-                to_remove = final_D[dist(gen)];
+                to_remove = final_D[dist(m_rng)];
             }
         }
 

@@ -1,8 +1,10 @@
 #pragma once
 
-#include "IArchiver.h"
 #include <cstdint>
+#include <random>
 #include <vector>
+
+#include "IArchiver.h"
 
 namespace UavMoea::archivers {
 
@@ -16,9 +18,10 @@ public:
 private:
     uint16_t m_capacity;
     std::vector<Individual> m_archive;
+    mutable std::mt19937 m_rng;
 
-    std::vector<int> getBox(const std::vector<double>& obj, int b) const;
-    bool boxDominatesOrEqual(const std::vector<int>& boxA, const std::vector<int>& boxB) const;
+    std::vector<int64_t> getBox(const std::vector<double>& obj, int b) const;
+    bool boxDominatesOrEqual(const std::vector<int64_t>& boxA, const std::vector<int64_t>& boxB) const;
 };
 
 } // namespace UavMoea::archivers
