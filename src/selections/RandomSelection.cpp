@@ -8,6 +8,7 @@ std::vector<Individual> RandomSelection::selectParents(const std::vector<Individ
     std::uniform_int_distribution<size_t> dist(0, archive.size() - 1);
 
     std::vector<Individual> parents;
+    parents.reserve(count);
     for (uint16_t i = 0; i < count; ++i) {
         parents.push_back(archive[dist(m_rng)]);
     }

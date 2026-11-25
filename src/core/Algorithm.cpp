@@ -16,7 +16,8 @@ void Algorithm::run(uint32_t max_evaluations, uint16_t mu, uint16_t lambda, Asyn
     initial_pop.reserve(mu);
     for (uint16_t i = 0; i < mu; ++i) {
         Individual ind = m_problem->generateRandom();
-        m_problem->evaluate(ind);
+        if (ind.objectives.empty())
+            m_problem->evaluate(ind);
         initial_pop.push_back(std::move(ind));
     }
     m_archiver->update(initial_pop);
@@ -37,7 +38,9 @@ void Algorithm::run(uint32_t max_evaluations, uint16_t mu, uint16_t lambda, Asyn
         }
 
         for (auto& offspring : offsprings) {
-            m_problem->evaluate(offspring);
+            if (offspring.objectives.empty()) {
+                m_problem->evaluate(offspring);
+            }
             evaluations++;
         }
 

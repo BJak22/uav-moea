@@ -72,7 +72,7 @@ std::vector<double> R2Indicator::calculateContributions(const std::vector<Indivi
                     max_diff = diff;
             }
 
-            if (max_diff < best_val) {
+            if (max_diff <= best_val) {
                 second_best_val = best_val;
                 best_val = max_diff;
                 best_idx = p;

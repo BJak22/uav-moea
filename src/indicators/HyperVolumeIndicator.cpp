@@ -1,6 +1,8 @@
 #include "indicators/HypervolumeIndicator.h"
-#include "utils/Pareto.h"
+
 #include <algorithm>
+
+#include "utils/Pareto.h"
 
 namespace UavMoea::indicators {
 
